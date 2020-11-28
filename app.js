@@ -55,6 +55,39 @@ const questions = [
     }
 ];
 
+
+//function to initialize program
+function init() {
+    inquirer
+    .prompt([
+        {
+            type: "number",
+            name: "teamSize",
+            message: "What is the size of your team?"
+        }
+    ])
+    .then((response) => {
+        console.log(response);
+        const team = [];  
+        const askQuestions = () => {
+        //using inquirer.prompt() method
+            inquirer
+            .prompt(questions)
+            .then((answers)=>{
+                team.push(answers);
+                console.log(team); 
+                if (team.length < response.teamSize){
+                    askQuestions();  
+                }
+            });
+        }
+        askQuestions();
+    });
+};
+
+// function call to initialize program
+init();
+
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
