@@ -91,7 +91,15 @@ function init() {
                 console.log(team); 
                 if (team.length < response.teamSize){
                     askQuestions();  
-                } 
+                } else {
+                    const renderTeamProfile = render(team);
+                    if (!fs.existsSync(OUTPUT_DIR)){
+                        fs.mkdirSync(OUTPUT_DIR);
+                    }
+                    fs.writeFile(outputPath, renderTeamProfile, (err) =>
+                     err ? console.error(err) : console.log('Success!')
+                    );
+                }
             });
         }
         askQuestions();
