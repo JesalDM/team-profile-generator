@@ -31,7 +31,7 @@ const questions = [
     },
     {
         type: "list",
-        name: "role",
+        name: "employeeType",
         message: "What is the role of the employee?",
         choices: ['Manager', 'Engineer', 'Intern']
     },
@@ -39,19 +39,19 @@ const questions = [
         type: "number",
         name: "officeNumber",
         message: "What is the office number of the Manager?",
-        when: (answers) => answers.role === 'Manager'
+        when: (answers) => answers.employeeType === 'Manager'
     },
     {
         type: "input",
         name: "github",
         message: "What is the github username of the Engineer?",
-        when: (answers) => answers.role === 'Engineer'
+        when: (answers) => answers.employeeType === 'Engineer'
     },
     {
         type: "input",
         name: "school",
         message: "What is the name of the intern's school?",
-        when: (answers) => answers.role === 'Intern'
+        when: (answers) => answers.employeeType === 'Intern'
     }
 ];
 
@@ -74,11 +74,24 @@ function init() {
             inquirer
             .prompt(questions)
             .then((answers)=>{
-                team.push(answers);
+                switch(answers.employeeType){
+                    case "Manager":
+                        const manager = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
+                        team.push(manager);
+                        break;
+                    case "Engineer":
+                        const engineer = new Engineer(answers.name, answers.id, answers.email, answers.github);
+                        team.push(engineer);
+                        break;
+                    case "Intern":
+                        const intern = new Intern(answers.name, answers.id, answers.email, answers.school);
+                        team.push(intern);
+                        break;
+                    }
                 console.log(team); 
                 if (team.length < response.teamSize){
                     askQuestions();  
-                }
+                } 
             });
         }
         askQuestions();
