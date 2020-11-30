@@ -17,17 +17,41 @@ const questions = [
     {
         type: "input",
         name: "name",
-        message: "What is the name of the employee?"
+        message: "What is the name of the employee?",
+        validate: answer => {
+            if (answer === ""){
+                return "Name is required";
+            } 
+            return true;
+        }
     },
     {
         type: "number",
         name: "id",
-        message: "What is the id of the employee?"
+        message: "What is the id of the employee?",
+        validate: (answer) => {
+            if (answer === ""){
+              return "Please enter a number greater than 0";
+            }
+              return true;
+        },
+        filter: answer => {
+            if(Number.isNaN(answer) || Number(answer)<=0){
+                return ""
+            }
+            return Number(answer);
+        }     
     },
     {
         type: "input",
         name: "email",
-        message: "What is the email address of the employee?"
+        message: "What is the email address of the employee?",
+        validate: (answer)=> {
+            if (!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(answer))){
+                return "Please enter a valid email address";
+            }
+            return true;
+        }
     },
     {
         type: "list",
@@ -39,19 +63,43 @@ const questions = [
         type: "number",
         name: "officeNumber",
         message: "What is the office number of the Manager?",
-        when: (answers) => answers.employeeType === 'Manager'
+        when: (answers) => answers.employeeType === 'Manager',
+        validate: (answer) => {
+            if (answer === ""){
+              return "Please enter a valid 10-digit number";
+            }
+              return true;
+        },
+        filter: answer => {
+            if(!((/^\d{10}$/).test(answer))){
+                return ""
+            }
+            return Number(answer);
+        }     
     },
     {
         type: "input",
         name: "github",
         message: "What is the github username of the Engineer?",
-        when: (answers) => answers.employeeType === 'Engineer'
+        when: (answers) => answers.employeeType === 'Engineer',
+        validate: answer => {
+            if (answer === ""){
+                return "Github username is required";
+            } 
+            return true;
+        }
     },
     {
         type: "input",
         name: "school",
         message: "What is the name of the intern's school?",
-        when: (answers) => answers.employeeType === 'Intern'
+        when: (answers) => answers.employeeType === 'Intern',
+        validate: answer => {
+            if (answer === ""){
+                return "School name is required";
+            } 
+            return true;
+        }
     }
 ];
 
@@ -67,7 +115,6 @@ function init() {
         }
     ])
     .then((response) => {
-        console.log(response);
         const team = [];  
         const askQuestions = () => {
         //using inquirer.prompt() method
@@ -88,7 +135,6 @@ function init() {
                         team.push(intern);
                         break;
                     }
-                console.log(team); 
                 if (team.length < response.teamSize){
                     askQuestions();  
                 } else {
