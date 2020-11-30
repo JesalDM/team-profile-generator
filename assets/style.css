@@ -1,6 +1,5 @@
 .team-heading{
-   background-color: rgb(236, 214, 90);
-   
+   background-color: rgb(241, 232, 99);
 }
 
 .card-header{
@@ -11,5 +10,9 @@
 .employee-card{
     margin: 20px;
     box-shadow: 5px 10px 8px #888888;
-    width: 30%;
+    width: 300px;
+}
+
+h3{
+    color: orange;
 }
