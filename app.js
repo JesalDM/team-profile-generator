@@ -18,6 +18,7 @@ const questions = [
         type: "input",
         name: "name",
         message: "What is the name of the employee?",
+        // validates that response is provided
         validate: answer => {
             if (answer === ""){
                 return "Name is required";
@@ -29,6 +30,7 @@ const questions = [
         type: "number",
         name: "id",
         message: "What is the id of the employee?",
+        // validates that response is provided and is a positive number 
         validate: (answer) => {
             if (answer === ""){
               return "Please enter a number greater than 0";
@@ -46,6 +48,7 @@ const questions = [
         type: "input",
         name: "email",
         message: "What is the email address of the employee?",
+        // validates that the response provided is in the basic email format
         validate: (answer)=> {
             if (!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(answer))){
                 return "Please enter a valid email address";
@@ -63,7 +66,9 @@ const questions = [
         type: "number",
         name: "officeNumber",
         message: "What is the office number of the Manager?",
+        // this question will be asked only if the employee is a Manager
         when: (answers) => answers.employeeType === 'Manager',
+        // validates that the response is a 10-digit number
         validate: (answer) => {
             if (answer === ""){
               return "Please enter a valid 10-digit number";
@@ -81,7 +86,9 @@ const questions = [
         type: "input",
         name: "github",
         message: "What is the github username of the Engineer?",
+        // this question will be asked only if the employee is an Engineer
         when: (answers) => answers.employeeType === 'Engineer',
+        // validates that response is provided 
         validate: answer => {
             if (answer === ""){
                 return "Github username is required";
@@ -93,7 +100,9 @@ const questions = [
         type: "input",
         name: "school",
         message: "What is the name of the intern's school?",
+        // this question will be asked only if the employee is an Intern
         when: (answers) => answers.employeeType === 'Intern',
+        // validates that response is provided 
         validate: answer => {
             if (answer === ""){
                 return "School name is required";
@@ -106,6 +115,7 @@ const questions = [
 
 //function to initialize program
 function init() {
+    //using inquirer.prompt() method
     inquirer
     .prompt([
         {
@@ -121,6 +131,7 @@ function init() {
             inquirer
             .prompt(questions)
             .then((answers)=>{
+                // depending on the employeeType, object instances of each employee is created corresponding to their class object based on responses, and pushed to the team array
                 switch(answers.employeeType){
                     case "Manager":
                         const manager = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
@@ -135,13 +146,18 @@ function init() {
                         team.push(intern);
                         break;
                     }
+                // condition to check if the set of questions should be repeated or not based on team size entered by the user
                 if (team.length < response.teamSize){
+                    // recurssion
                     askQuestions();  
                 } else {
+                    // if condition fails implying that team details are complete, then call the function to render the team
                     const renderTeamProfile = render(team);
+                    // checks if output directory exists, if not, creates the directory
                     if (!fs.existsSync(OUTPUT_DIR)){
                         fs.mkdirSync(OUTPUT_DIR);
                     }
+                    // writes the content to the file team.html
                     fs.writeFile(outputPath, renderTeamProfile, (err) =>
                      err ? console.error(err) : console.log('Success!')
                     );
