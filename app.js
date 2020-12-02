@@ -10,9 +10,71 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+// array of questions prompted to the manager for his personal details
+const questionsManager = [
+    {
+        type: "input",
+        name: "name",
+        message: "What is your name?",
+        // validates that response is provided
+        validate: answer => {
+            if (answer === ""){
+                return "Name is required";
+            } 
+            return true;
+        }
+    },
+    {
+        type: "number",
+        name: "id",
+        message: "What is your id?",
+        // validates that response is provided and is a positive number 
+        validate: (answer) => {
+            if (answer === ""){
+              return "Please enter a number greater than 0";
+            }
+              return true;
+        },
+        filter: answer => {
+            if(Number.isNaN(answer) || Number(answer)<=0){
+                return ""
+            }
+            return Number(answer);
+        }     
+    },
+    {
+        type: "input",
+        name: "email",
+        message: "What is the your email address?",
+        // validates that the response provided is in the basic email format
+        validate: (answer)=> {
+            if (!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(answer))){
+                return "Please enter a valid email address";
+            }
+            return true;
+        }
+    },
+    {
+        type: "number",
+        name: "officeNumber",
+        message: "What is your office number?",
+        // validates that the response is a 10-digit number
+        validate: (answer) => {
+            if (answer === ""){
+              return "Please enter a valid 10-digit number";
+            }
+              return true;
+        },
+        filter: answer => {
+            if(!((/^\d{10}$/).test(answer))){
+                return ""
+            }
+            return Number(answer);
+        }     
+    }
+];
 
-
-// array of questions prompted to the user
+// array of questions prompted to the manager for his team details
 const questions = [
     {
         type: "input",
@@ -60,27 +122,7 @@ const questions = [
         type: "list",
         name: "employeeType",
         message: "What is the role of the employee?",
-        choices: ['Manager', 'Engineer', 'Intern']
-    },
-    {
-        type: "number",
-        name: "officeNumber",
-        message: "What is the office number of the Manager?",
-        // this question will be asked only if the employee is a Manager
-        when: (answers) => answers.employeeType === 'Manager',
-        // validates that the response is a 10-digit number
-        validate: (answer) => {
-            if (answer === ""){
-              return "Please enter a valid 10-digit number";
-            }
-              return true;
-        },
-        filter: answer => {
-            if(!((/^\d{10}$/).test(answer))){
-                return ""
-            }
-            return Number(answer);
-        }     
+        choices: ['Engineer', 'Intern']
     },
     {
         type: "input",
@@ -115,56 +157,72 @@ const questions = [
 
 //function to initialize program
 function init() {
-    //using inquirer.prompt() method
+    const team = [];
     inquirer
-    .prompt([
-        {
-            type: "number",
-            name: "teamSize",
-            message: "What is the size of your team?"
-        }
-    ])
-    .then((response) => {
-        const team = [];  
-        const askQuestions = () => {
+    .prompt(questionsManager)
+    .then((res)=>{
+        const manager = new Manager(res.name, res.id, res.email, res.officeNumber);
+        team.push(manager);
+    
         //using inquirer.prompt() method
-            inquirer
-            .prompt(questions)
-            .then((answers)=>{
-                // depending on the employeeType, object instances of each employee is created corresponding to their class object based on responses, and pushed to the team array
-                switch(answers.employeeType){
-                    case "Manager":
-                        const manager = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
-                        team.push(manager);
-                        break;
-                    case "Engineer":
-                        const engineer = new Engineer(answers.name, answers.id, answers.email, answers.github);
-                        team.push(engineer);
-                        break;
-                    case "Intern":
-                        const intern = new Intern(answers.name, answers.id, answers.email, answers.school);
-                        team.push(intern);
-                        break;
+        inquirer
+        .prompt([
+            {
+                type: "number",
+                name: "teamSize",
+                message: "What is the size of your team?",
+                // validates that response is provided and is a positive number 
+                validate: (answer) => {
+                    if (answer === ""){
+                      return "Please enter a number greater than 0";
                     }
-                // condition to check if the set of questions should be repeated or not based on team size entered by the user
-                if (team.length < response.teamSize){
-                    // recurssion
-                    askQuestions();  
-                } else {
-                    // if condition fails implying that team details are complete, then call the function to render the team
-                    const renderTeamProfile = render(team);
-                    // checks if output directory exists, if not, creates the directory
-                    if (!fs.existsSync(OUTPUT_DIR)){
-                        fs.mkdirSync(OUTPUT_DIR);
+                      return true;
+                },
+                filter: answer => {
+                    if(Number.isNaN(answer) || Number(answer)<=0){
+                        return ""
                     }
-                    // writes the content to the file team.html
-                    fs.writeFile(outputPath, renderTeamProfile, (err) =>
-                     err ? console.error(err) : console.log('Success!')
-                    );
-                }
-            });
-        }
-        askQuestions();
+                    return Number(answer);
+                }     
+            }
+        ])
+        .then((response) => {
+            const askQuestions = () => {
+            //using inquirer.prompt() method
+                inquirer
+                .prompt(questions)
+                .then((answers)=>{
+                    // depending on the employeeType, object instances of each employee is created corresponding to their class object based on responses, and pushed to the team array
+                    switch(answers.employeeType){
+                        case "Engineer":
+                            const engineer = new Engineer(answers.name, answers.id, answers.email, answers.github);
+                            team.push(engineer);
+                            break;
+                        case "Intern":
+                            const intern = new Intern(answers.name, answers.id, answers.email, answers.school);
+                            team.push(intern);
+                            break;
+                        }
+                    // condition to check if the set of questions should be repeated or not based on team size entered by the user
+                    if (team.length <= response.teamSize){
+                        // recurssion
+                        askQuestions();  
+                    } else {
+                        // if condition fails implying that team details are complete, then call the function to render the team
+                        const renderTeamProfile = render(team);
+                        // checks if output directory exists, if not, creates the directory
+                        if (!fs.existsSync(OUTPUT_DIR)){
+                            fs.mkdirSync(OUTPUT_DIR);
+                        }
+                        // writes the content to the file team.html
+                        fs.writeFile(outputPath, renderTeamProfile, (err) =>
+                        err ? console.error(err) : console.log('Success!')
+                        );
+                    }
+                });
+            }
+            askQuestions();
+        });
     });
 };
 

@@ -15,7 +15,10 @@ This ```team.html``` file is generated dynamically from user's input using the [
 
 Application Development: 
 [Inquirer npm package](https://github.com/SBoudrias/Inquirer.js/) has been used to prompt the user for details like name, email, id, and specific information based on their role with the company. For instance, an intern may provide their school, whereas an engineer may provide their GitHub username. The different employee types all inherit some methods and properties from a base class of `Employee`.
-[jest](https://jestjs.io/) is used for running the provided tests. All the unit tests have been run using `npm run test`and have passed.
+All the unit tests have been run using `npm run test`and have passed.[jest](https://jestjs.io/) is used for running the provided tests. 
+Bonuses have also been implemented:
+- Used validations to ensure that the information provided is in the proper expected format.
+- Added the application to my portfolio.
 
 ## Table of Contents
 * [Installation](#installation)
@@ -49,9 +52,16 @@ This project is licensed under the terms of the MIT license.
 ## For Review
 * Github Repository URL: https://github.com/JesalDM/team-profile-generator
 * Walkthrough video: 
-    - ![Application-Demo](./assets/team-profile-generator-app-demo.mp4)
-    - ![Output-Team-Profile-Demo](./assets/team-profile-output-html-demo.mp4)
+    - ![Application-Demo-Part1](./assets/app-demo-part1.gif)
+    - ![Application-Demo-Part2](./assets/app-demo-part2.gif)
+    - ![Application-Demo-Part2](./assets/app-demo-part3.gif)
 * Screenshot :
    - ![Tests passed Screenshot](./assets/All-tests-passed.png)
    - ![Team Profile Generated Screenshot](./assets/team-profile.png)
 * Link to sample team.html file generated: [Sample-Team-Profile](./assets/sampleTeam.html)
+* Bonuses implemented:
+   - Added validations to ensure that the responses are in the expected format
+        ![Validations-Demo](./assets/validations-demo.gif)
+   - Added this project to my portfolio
+        Portfolio URL: (https://jesaldm.github.io/portfolio/)
+        Portfolio Github URL: (https://github.com/JesalDM/portfolio)
